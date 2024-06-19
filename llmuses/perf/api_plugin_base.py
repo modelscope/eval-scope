@@ -39,3 +39,22 @@ class ApiPluginBase:
             Tuple: (Number of prompt_tokens and number of completion_tokens).
         """
         raise NotImplementedError  
+
+    @staticmethod
+    def replace_values(input_json: Any, model: str, prompt: str):
+        if isinstance(input_json, dict):  
+            for key, value in input_json.items():
+                if isinstance(value, str):
+                    input_json[key] = value.replace("%m", model).replace("%p", prompt)
+                else:                    
+                    ApiPluginBase.replace_values(value, model, prompt)  
+        elif isinstance(input_json, list): 
+            for idx, item in enumerate(input_json):
+                if isinstance(item, str):
+                    input_json[idx] = item.replace("%m", model).replace("%p", prompt)
+                else:
+                    ApiPluginBase.replace_values(item, model, prompt)
+        elif isinstance(input_json, str):
+            input_json = input_json.replace("%m", model).replace("%p", prompt)
+        else:
+            pass

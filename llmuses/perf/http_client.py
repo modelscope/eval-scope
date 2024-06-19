@@ -30,12 +30,13 @@ from llmuses.perf.openai_api import OpenaiPlugin
 from llmuses.perf.datasets.line_by_line import LineByLineDatasetPlugin
 from llmuses.perf.datasets.longalpaca_12k import LongAlpacaDatasetPlugin
 from llmuses.perf.datasets.openqa import OpenqaDatasetPlugin
-
+from llmuses.perf.custom_api import CustomPlugin
 from llmuses.perf._logging import logger
 
 __all__ = [
     DashScopeApiPlugin,
     OpenaiPlugin,
+    CustomPlugin,
     LineByLineDatasetPlugin,
     LongAlpacaDatasetPlugin,
     OpenqaDatasetPlugin,
@@ -317,6 +318,10 @@ async def statistic_benchmark_metric_worker(benchmark_data_queue: asyncio.Queue,
     else:
         result_db_path = "./%s_benchmark_%s.db" % (args.model, current_time)
     print('Save the result to : %s'%result_db_path)
+    if os.path.exists(result_db_path):
+        print('The db file exist, delete it and start again!.')
+        sys.exit(1)
+        
     con = sqlite3.connect(result_db_path)
 
     db_cur = con.cursor()
@@ -561,7 +566,7 @@ async def send_requests_worker(task_id, request_queue: asyncio.Queue, benchmark_
                 benchmark_data["completed_time"] = time.perf_counter()
                 benchmark_data["success"] = not is_error
                 await benchmark_data_queue.put(benchmark_data)
-            except Exception as e:
+            except BaseException as e:
                 if response_data:
                     collected_messages.append(response_data)  # save the message
                 benchmark_data["response_messages"] = collected_messages
