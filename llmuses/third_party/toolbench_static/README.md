@@ -47,7 +47,7 @@ There are two ways to configure the task: dict and yaml.
 1. Configuration with dict:
 
 ```python
-task_config = {
+your_task_config = {
     'infer_args': {
         'model_name_or_path': '/path/to/model_dir',
         'model_type': 'qwen2-7b-instruct',
@@ -96,13 +96,14 @@ refer to [config_default.yaml](config_default.yaml) for more details.
 ### Run the task
 
 ```python
+```python
 from llmuses.third_party.toolbench_static import run_task
 
 # Run the task with dict configuration
-run_task(task_config=task_config)
+run_task(task_cfg=your_task_config)
 
 # Run the task with yaml configuration
-run_task(task_config='/path/to/your_task_config.yaml')
+run_task(task_cfg='/path/to/your_task_config.yaml')
 ```
 
 

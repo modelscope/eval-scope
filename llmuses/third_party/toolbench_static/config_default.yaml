@@ -1,7 +1,7 @@
 
 infer_args:
-  model_name_or_path: /path/to/model_dir   # TODO: need to replace with your model dir, absolute path is recommended
-  model_type: qwen2-7b-instruct           # TODO: need to replace with your model type
+  model_name_or_path: /path/to/model_dir   # Note: need to replace with your model dir, absolute path is recommended
+  model_type: qwen2-7b-instruct           # Note: need to replace with your model type
   data_path: /path/to/data/toolbench_static   # absolute path is recommended
   deploy_type: swift
   max_new_tokens: 2048

@@ -1,0 +1,11 @@
+eval_backend: OpenCompass
+eval_config:
+  datasets:
+  - mmlu
+  - ceval
+  - ARC_c
+  - gsm8k
+  models:
+  - openai_api_base: http://127.0.0.1:8000/v1/chat/completions
+    path: llama3-8b-instruct
+    temperature: 0.0

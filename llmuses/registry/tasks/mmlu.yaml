@@ -14,7 +14,9 @@ generation_config:
   repetition_penalty: 1.0
 #  eos_token_id: null
 #  pad_token_id: null
-dataset_args: {}
+dataset_args:
+  mmlu:
+    few_shot_num: 0
 dry_run: false
 model: null   # Note: to be implemented as CustomModel
 eval_type: custom

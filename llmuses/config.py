@@ -45,7 +45,7 @@ class TaskConfig:
     use_cache: bool = True
     stage: str = 'all'      # `all` or `infer` or `review`
     dataset_hub: str = 'ModelScope'
-    dataset_dir: str = ''
+    dataset_dir: str = DEFAULT_ROOT_CACHE_DIR
     limit: int = None
 
     # def __post_init__(self):

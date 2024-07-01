@@ -3,8 +3,10 @@
 
 import functools
 import importlib
+import importlib.util
 import os
 import re
+import json
 import random
 import sys
 from typing import Any, Union, Dict, Tuple, List
@@ -115,6 +117,20 @@ def dict_to_yaml(d: dict, yaml_file: str):
     with open(yaml_file, 'w') as f:
         yaml.dump(d, f, default_flow_style=False)
     logger.info(f'Dump data to {yaml_file} successfully.')
+
+
+def json_to_dict(json_file) -> dict:
+    """
+    Read json file to dict.
+    """
+    with open(json_file, 'r') as f:
+        try:
+            stream = json.load(f)
+        except json.JSONDecodeError as e:
+            logger.error(f'{e}')
+            raise e
+
+    return stream
 
 
 def get_obj_from_cfg(eval_class_ref: Any, *args, **kwargs) -> Any:
@@ -541,3 +557,69 @@ def get_dist_setting() -> Tuple[int, int, int, int]:
 
 def use_torchacc() -> bool:
     return os.getenv('USE_TORCHACC', '0') == '1'
+
+
+def is_module_installed(module_name):
+    try:
+        importlib.import_module(module_name)
+        return True
+    except ImportError:
+        return False
+
+
+def get_module_path(module_name):
+    spec = importlib.util.find_spec(module_name)
+    if spec and spec.origin:
+        return os.path.abspath(spec.origin)
+    else:
+        raise ValueError(f'Cannot find module: {module_name}')
+
+
+def get_valid_list(input_list, candidate_list):
+    """
+    Get the valid and invalid list from input_list based on candidate_list.
+    Args:
+        input_list: The input list.
+        candidate_list: The candidate list.
+
+    Returns:
+        valid_list: The valid list.
+        invalid_list: The invalid list.
+    """
+    return [i for i in input_list if i in candidate_list], \
+           [i for i in input_list if i not in candidate_list]
+
+
+def get_latest_folder_path(work_dir):
+    from datetime import datetime
+    # Get all subdirectories in the work_dir
+    folders = [f for f in os.listdir(work_dir) if os.path.isdir(os.path.join(work_dir, f))]
+
+    # Get the timestamp（YYYYMMDD_HHMMSS）
+    timestamp_pattern = re.compile(r'^\d{8}_\d{6}$')
+
+    # Filter out the folders
+    timestamped_folders = [f for f in folders if timestamp_pattern.match(f)]
+
+    if not timestamped_folders:
+        print(f'>> No timestamped folders found in {work_dir}!')
+        return None
+
+    # timestamp parser
+    def parse_timestamp(folder_name):
+        return datetime.strptime(folder_name, "%Y%m%d_%H%M%S")
+
+    # Find the latest folder
+    latest_folder = max(timestamped_folders, key=parse_timestamp)
+
+    return os.path.join(work_dir, latest_folder)
+
+
+def csv_to_list(file_path: str) -> List[dict]:
+    import csv
+
+    with open(file_path, mode='r', newline='', encoding='utf-8') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        result = [row for row in csv_reader]
+
+    return result

@@ -1,0 +1,6 @@
+models:
+   - ms_qwen_7b_chat
+#   - hf_qwen_7b_chat
+datasets:
+  - mmlu_ppl
+dry_run: false

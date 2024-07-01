@@ -10,7 +10,7 @@ def main():
     )
 
     # Run the task
-    run_task(task_config=task_cfg_d)
+    run_task(task_cfg=task_cfg_d)
 
 
 if __name__ == '__main__':

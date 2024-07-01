@@ -1,0 +1,15 @@
+{
+  "infer_args": {
+    "model_name_or_path": "/path/to/model_dir",
+    "model_type": "qwen2-7b-instruct",
+    "data_path": "/path/to/data/toolbench_static",
+    "deploy_type": "swift",
+    "max_new_tokens": 2048,
+    "num_infer_samples": null,
+    "output_dir": "output_res"
+  },
+  "eval_args": {
+    "input_path": "output_res",
+    "output_path": "output_res"
+  }
+}

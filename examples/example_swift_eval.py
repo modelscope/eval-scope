@@ -54,7 +54,7 @@ class SwiftModel(CustomModel):
         # response: str = str(response)
 
         # ONLY FOR TEST
-        response = 'The answer is C. NOTE: ONLY FOR TEST'
+        response = 'The answer is C.'
 
         res_d: dict = {
             'choices': [

@@ -145,3 +145,7 @@ llmuses/data/
 
 # temp
 temp/
+tmp/
+
+# data
+data
