@@ -36,7 +36,7 @@ class DashScopeApiPlugin(ApiPluginBase):
         try:
             if param.query_template is not None:
                 query = json.loads(param.query_template)
-                query['messages'] = messages  # replace template content with message.
+                query['input']['messages'] = messages  # replace template content with message.
                 return self.__compose_query_from_parameter(query, param)
             else:
                 query = {'messages': messages}
@@ -44,10 +44,10 @@ class DashScopeApiPlugin(ApiPluginBase):
         except Exception as e:
             print(e)
             return None
-
     def __compose_query_from_parameter(self, payload: Dict, param: QueryParameters):
         payload['model'] = param.model
-        payload['parameters'] = {}
+        if 'parameters' not in payload:
+            payload['parameters'] = {}
         if param.max_tokens is not None:
             payload['parameters']['max_tokens'] = param.max_tokens
         if param.frequency_penalty is not None:
