@@ -72,10 +72,6 @@ def checkpoint() -> type[ModelAPI]:
 
 @register_model_api(name='text2image')
 def text2image() -> type[ModelAPI]:
-    check_import(
-        ['torch', 'torchvision', 'diffusers'], package='evalscope[aigc]', raise_error=True, feature_name='text2image'
-    )
-
     from .text2image_model import Text2ImageAPI
 
     return Text2ImageAPI

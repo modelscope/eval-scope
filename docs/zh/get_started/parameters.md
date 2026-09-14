@@ -151,7 +151,7 @@
 
 | 参数 | 类型 | 说明 | 默认值 |
 |------|------|------|--------|
-| `--eval-type` | `str` | 评测类型<br>• `llm_ckpt`: 本地模型推理（transformers）<br>• `openai_api`: OpenAI兼容Chat Completions API服务<br>• `openai_responses_api`: OpenAI官方Responses API服务<br>• `anthropic_api`: Anthropic Claude API服务<br>• `litellm`: LiteLLM多厂商路由（支持100+ LLM服务商）<br>• `text2image`: 文本转图像模型（diffusers）<br>• `text2speech`: 文本转语音模型服务<br>• `image_editing`: 图像编辑模型<br>• `mock_llm`: 模拟推理（功能验证）<br>• `custom`: 自定义评测类型 | `None`（自动判断） |
+| `--eval-type` | `str` | 评测类型<br>• `llm_ckpt`: 本地模型推理（transformers）<br>• `openai_api`: OpenAI兼容Chat Completions API服务<br>• `openai_responses_api`: OpenAI官方Responses API服务<br>• `anthropic_api`: Anthropic Claude API服务<br>• `litellm`: LiteLLM多厂商路由（支持100+ LLM服务商）<br>• `text2image`: 文本转图像模型（本地 diffusers 或 OpenAI 兼容 Images API 服务）<br>• `text2speech`: 文本转语音模型服务<br>• `image_editing`: 图像编辑模型<br>• `mock_llm`: 模拟推理（功能验证）<br>• `custom`: 自定义评测类型 | `None`（自动判断） |
 | `--eval-batch-size` | `int` | 评测批量大小，作用于以下阶段：<br>• 推理阶段：并发请求数（远程 API 模式）或批量大小（`llm_ckpt`模式）<br>• LLM-judge 评审阶段：并发线程数<br>• batch_calculate_metrics 阶段：每批次处理的样本数 | `1`（`openai_api`、`openai_responses_api`、`anthropic_api`、`litellm` 等远程 API 模式为`8`） |
 | `--eval-backend` | `str` | 评测后端<br>• `Native`: 默认后端<br>• `OpenCompass`: 大语言模型评测<br>• `VLMEvalKit`: 多模态模型评测<br>• `RAGEval`: RAG/Embedding/Reranker/CLIP评测<br>• `ThirdParty`: 特殊任务评测 | `Native` |
 | `--eval-config` | `str` | 非Native后端的配置文件路径 | - |

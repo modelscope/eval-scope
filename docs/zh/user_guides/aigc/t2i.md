@@ -47,7 +47,46 @@ EvalScope框架支持多种评测指标，用户可以根据需求选择合适�
 pip install evalscope[aigc] -U
 ```
 
-## Benchmark
+## OpenAI 兼容的图像生成服务
+
+对于自托管服务，当前支持符合 OpenAI Images API 格式的接口。将 `eval_type` 设为
+`text2image`，并传入 API 的基础地址：
+
+```python
+from evalscope import TaskConfig, run_task
+from evalscope.constants import EvalType, ModelTask
+
+task_cfg = TaskConfig(
+    model='YOUR_MODEL_ID',
+    model_task=ModelTask.IMAGE_GENERATION,
+    eval_type=EvalType.TEXT2IMAGE,
+    api_url='http://localhost:8895/v1',
+    api_key='EMPTY',
+    datasets=['tifa160'],
+    limit=5,
+    generation_config={
+        'height': 1024,
+        'width': 1024,
+        'timeout': 120,
+        'retries': 3,
+        'retry_interval': 1,
+    },
+)
+
+run_task(task_cfg=task_cfg)
+```
+
+服务需要接受 `POST /v1/images/generations`，请求字段按 OpenAI 协议使用 `model`、`prompt`、
+可选的 `n` 和 `size`。JSON 响应必须包含非空的 `data` 列表。EvalScope 只会评测首个元素，
+该元素需提供 `b64_json` 或 HTTP(S) `url`。Base64 数据可以是纯字符串，也可以是
+data URI。`api_url` 可以传基础地址、完整的 `/images/generations` 地址，或复制得到的 `/chat/completions`
+地址；EvalScope 会在调用 Images API 前统一处理。
+
+`api_key='EMPTY'` 会先读取 `OPENAI_API_KEY`，再读取 `EVALSCOPE_API_KEY`。如果都没有设置，
+请求会把 `EMPTY` 作为本地服务的占位密钥。这一模式暂不支持 DashScope/Model Studio 图像生成 API
+等厂商私有协议、使用 `images` 字段的响应、异步提交后轮询的接口和图像编辑。这些协议需要单独适配。
+
+## 本地模型评测
 
 用户可以通过以下命令配置文生图模型的评测任务。
 

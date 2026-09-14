@@ -535,10 +535,12 @@ class TaskConfig(BaseArgument):
             self.model = self.model_task
             self.eval_type = EvalType.MOCK_LLM
 
-        # Set eval_type to openai_api if api_url is provided
+        # Select the matching service API when api_url is provided
         if self.api_url is not None and self.eval_type is None:
-            logger.info("api_url is provided, setting eval_type to 'openai_api'.")
-            self.eval_type = EvalType.OPENAI_API
+            self.eval_type = (
+                EvalType.TEXT2IMAGE if self.model_task == ModelTask.IMAGE_GENERATION else EvalType.OPENAI_API
+            )
+            logger.info(f"api_url is provided, setting eval_type to '{self.eval_type}'.")
 
         # Set eval_type to CHECKPOINT if model is a string path and eval_type is not set
         if self.model and self.eval_type is None:
