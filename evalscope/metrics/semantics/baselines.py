@@ -146,6 +146,18 @@ SEMANTIC_BASELINES: Dict[str, MetricSemantics] = {
         'Judge Score',
         display_precision=2,
     ),
+    'quality.effort_calibration.unbounded': _plain_number(
+        'quality.effort_calibration.unbounded',
+        'Effort Calibration',
+        display_precision=4,
+        direction=MetricDirection.LOWER_IS_BETTER,
+    ),
+    'quality.effort_ratio.unbounded': _plain_number(
+        'quality.effort_ratio.unbounded',
+        'Effort Ratio',
+        display_precision=4,
+        direction=MetricDirection.LOWER_IS_BETTER,
+    ),
     #: Score assigned by a scoring model (aesthetic / preference / alignment scorers) whose
     #: scale is defined by the model rather than by the benchmark.
     'quality.model_score.unbounded': _plain_number(

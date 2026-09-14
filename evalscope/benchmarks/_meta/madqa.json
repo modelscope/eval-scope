@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "pretty_name": "MADQA",
+    "dataset_id": "evalscope/MADQA",
+    "paper_url": "https://arxiv.org/abs/2603.12180",
+    "tags": [
+      "Agent",
+      "MultiModal",
+      "MultiTurn",
+      "Retrieval",
+      "QA"
+    ],
+    "metrics": [
+      "anls",
+      "accuracy",
+      "document_f1",
+      "page_f1",
+      "kuiper_statistic",
+      "wasted_effort_ratio"
+    ],
+    "few_shot_num": 0,
+    "eval_split": "dev",
+    "train_split": "",
+    "subset_list": [
+      "single",
+      "cross_page",
+      "cross_doc"
+    ],
+    "description": "\n## Overview\n\nMADQA (Multimodal Agentic Document QA) evaluates document-retrieval agents on human-authored\nquestions grounded in a heterogeneous collection of PDF documents. EvalScope loads the ModelScope\nmirror, `evalscope/MADQA`.\n\n## Task Description\n\n- **Task Type**: Agentic multimodal document question answering\n- **Input**: A natural-language question over a collection of PDF documents accessed through retrieval tools\n- **Output**: A concise list of answer values and document/page citations in JSON\n- **Domain**: Heterogeneous real-world documents across financial, legal, reference, technical, and public-record domains\n\n## Key Features\n\n- Contains 2,250 questions over 800 PDF documents; the public ModelScope mirror provides 1,550 train, 200 dev, and 500 hidden-label test questions\n- Separates single-page, cross-page, and cross-document questions using the official evidence annotations\n- Supports native and external EvalScope agent runs when retrieval tools are supplied through `TaskConfig.agent_config`\n- Preserves the official answer-and-citation JSON contract, including an optional retrieval-step count\n\n## Evaluation Notes\n\n- The default `dev` split is the public scored split. The mirrored `test` split intentionally omits answer and evidence labels and cannot be scored locally\n- Reports official deterministic metrics: ANLS*, accuracy at ANLS* >= 0.5, document F1, and page F1\n- Kuiper statistic and Wasted Effort Ratio are additionally reported when predictions provide `iterations` or a native agent trace records retrieval tool calls\n- The official optional Gemini semantic-accuracy mode is not enabled: its fixed Gemini judge and published calibration are not portable to EvalScope judge configurations\n- EvalScope does not bundle the official BM25/OCR retrieval baseline. Configure compatible native tools, MCP servers, or an external agent that can access the published document URLs\n- [Paper](https://arxiv.org/abs/2603.12180) | [GitHub](https://github.com/OxRML/MADQA)\n",
+    "prompt_template": "{question}\n\nUse the available document-retrieval tools to find evidence before answering. Return only a JSON object:\n{{\"answer\": [\"short answer\"], \"citations\": [{{\"document\": \"filename.pdf\", \"page\": 1}}], \"iterations\": 0}}\n\nThe answer must be a list of concise values. Cite every document page used. Set `iterations` to the number of retrieval steps when it is known.",
+    "system_prompt": "You are a document QA assistant with access to document-retrieval tools. The answer is contained in the document collection. Search iteratively when evidence is incomplete, then give concise answer values and exact PDF filename/page citations.",
+    "few_shot_prompt_template": "",
+    "aggregation": "mean",
+    "extra_params": {},
+    "sandbox_config": {},
+    "category": "agent",
+    "primary_metric": {
+      "name": "accuracy",
+      "aggregation": null,
+      "dimensions": {}
+    }
+  },
+  "statistics": {
+    "total_samples": 200,
+    "subset_stats": [
+      {
+        "name": "single",
+        "sample_count": 163,
+        "prompt_length_mean": 677.05,
+        "prompt_length_min": 625,
+        "prompt_length_max": 806,
+        "prompt_length_std": 30.55,
+        "target_length_mean": 70.1
+      },
+      {
+        "name": "cross_page",
+        "sample_count": 18,
+        "prompt_length_mean": 686.11,
+        "prompt_length_min": 638,
+        "prompt_length_max": 739,
+        "prompt_length_std": 27.85,
+        "target_length_mean": 176.72
+      },
+      {
+        "name": "cross_doc",
+        "sample_count": 19,
+        "prompt_length_mean": 703.21,
+        "prompt_length_min": 644,
+        "prompt_length_max": 776,
+        "prompt_length_std": 32.63,
+        "target_length_mean": 25.68
+      }
+    ],
+    "prompt_length": {
+      "mean": 680.35,
+      "min": 625,
+      "max": 806,
+      "std": 31.37
+    },
+    "target_length_mean": 75.48,
+    "computed_at": "2026-09-07T17:31:25.015203+08:00"
+  },
+  "sample_example": {
+    "data": {
+      "input": [
+        {
+          "id": "b3dc7205",
+          "content": "You are a document QA assistant with access to document-retrieval tools. The answer is contained in the document collection. Search iteratively when evidence is incomplete, then give concise answer values and exact PDF filename/page citations."
+        },
+        {
+          "id": "1e14dcbf",
+          "content": "What are the CAD Standards Guide requirements when it comes to numbered street name conventions?\n\nUse the available document-retrieval tools to find evidence before answering. Return only a JSON object:\n{\"answer\": [\"short answer\"], \"citations\": [{\"document\": \"filename.pdf\", \"page\": 1}], \"iterations\": 0}\n\nThe answer must be a list of concise values. Cite every document page used. Set `iterations` to the number of retrieval steps when it is known."
+        }
+      ],
+      "target": "[[\"For First Street through Twelfth Street, spell-out the number\", \"For 28th Street and above (e.g. 44th Street), use numbers\", \"For Three Mile Road, Four Mile Road, etc., spell-out the number\"], [\"spell-out numbers for First Street through Twelfth Street\", \"use numbers for 28th Street and above (e.g. 44th Street)\", \"spell-out numbers for Three Mile Road, Four Mile Road, etc.\"]]",
+      "id": 0,
+      "group_id": 0,
+      "subset_key": "single",
+      "metadata": {
+        "id": "dev/0",
+        "question": "What are the CAD Standards Guide requirements when it comes to numbered street name conventions?",
+        "evidence": [
+          {
+            "document": "24514009.pdf",
+            "page": 7
+          }
+        ],
+        "document_category": "Guide",
+        "domain": "Reference",
+        "hop_type": "single"
+      }
+    },
+    "subset": "single",
+    "truncated": false
+  },
+  "readme": {
+    "en": "# MADQA\n\n\n## Overview\n\nMADQA (Multimodal Agentic Document QA) evaluates document-retrieval agents on human-authored\nquestions grounded in a heterogeneous collection of PDF documents. EvalScope loads the ModelScope\nmirror, `evalscope/MADQA`.\n\n## Task Description\n\n- **Task Type**: Agentic multimodal document question answering\n- **Input**: A natural-language question over a collection of PDF documents accessed through retrieval tools\n- **Output**: A concise list of answer values and document/page citations in JSON\n- **Domain**: Heterogeneous real-world documents across financial, legal, reference, technical, and public-record domains\n\n## Key Features\n\n- Contains 2,250 questions over 800 PDF documents; the public ModelScope mirror provides 1,550 train, 200 dev, and 500 hidden-label test questions\n- Separates single-page, cross-page, and cross-document questions using the official evidence annotations\n- Supports native and external EvalScope agent runs when retrieval tools are supplied through `TaskConfig.agent_config`\n- Preserves the official answer-and-citation JSON contract, including an optional retrieval-step count\n\n## Evaluation Notes\n\n- The default `dev` split is the public scored split. The mirrored `test` split intentionally omits answer and evidence labels and cannot be scored locally\n- Reports official deterministic metrics: ANLS*, accuracy at ANLS* >= 0.5, document F1, and page F1\n- Kuiper statistic and Wasted Effort Ratio are additionally reported when predictions provide `iterations` or a native agent trace records retrieval tool calls\n- The official optional Gemini semantic-accuracy mode is not enabled: its fixed Gemini judge and published calibration are not portable to EvalScope judge configurations\n- EvalScope does not bundle the official BM25/OCR retrieval baseline. Configure compatible native tools, MCP servers, or an external agent that can access the published document URLs\n- [Paper](https://arxiv.org/abs/2603.12180) | [GitHub](https://github.com/OxRML/MADQA)\n\n\n## Properties\n\n| Property | Value |\n|----------|-------|\n| **Benchmark Name** | `madqa` |\n| **Dataset ID** | [evalscope/MADQA](https://modelscope.cn/datasets/evalscope/MADQA/summary) |\n| **Paper** | [Paper](https://arxiv.org/abs/2603.12180) |\n| **Tags** | `Agent`, `MultiModal`, `MultiTurn`, `QA`, `Retrieval` |\n| **Metrics** | `anls`, `accuracy`, `document_f1`, `page_f1`, `kuiper_statistic`, `wasted_effort_ratio` |\n| **Default Shots** | 0-shot |\n| **Evaluation Split** | `dev` |\n\n\n## Data Statistics\n\n| Metric | Value |\n|--------|-------|\n| Total Samples | 200 |\n| Prompt Length (Mean) | 680.35 chars |\n| Prompt Length (Min/Max) | 625 / 806 chars |\n\n**Per-Subset Statistics:**\n\n| Subset | Samples | Prompt Mean | Prompt Min | Prompt Max |\n|--------|---------|-------------|------------|------------|\n| `single` | 163 | 677.05 | 625 | 806 |\n| `cross_page` | 18 | 686.11 | 638 | 739 |\n| `cross_doc` | 19 | 703.21 | 644 | 776 |\n\n## Sample Example\n\n**Subset**: `single`\n\n```json\n{\n  \"input\": [\n    {\n      \"id\": \"b3dc7205\",\n      \"content\": \"You are a document QA assistant with access to document-retrieval tools. The answer is contained in the document collection. Search iteratively when evidence is incomplete, then give concise answer values and exact PDF filename/page citations.\"\n    },\n    {\n      \"id\": \"1e14dcbf\",\n      \"content\": \"What are the CAD Standards Guide requirements when it comes to numbered street name conventions?\\n\\nUse the available document-retrieval tools to find evidence before answering. Return only a JSON object:\\n{\\\"answer\\\": [\\\"short answer\\\"], \\\"citations\\\": [{\\\"document\\\": \\\"filename.pdf\\\", \\\"page\\\": 1}], \\\"iterations\\\": 0}\\n\\nThe answer must be a list of concise values. Cite every document page used. Set `iterations` to the number of retrieval steps when it is known.\"\n    }\n  ],\n  \"target\": \"[[\\\"For First Street through Twelfth Street, spell-out the number\\\", \\\"For 28th Street and above (e.g. 44th Street), use numbers\\\", \\\"For Three Mile Road, Four Mile Road, etc., spell-out the number\\\"], [\\\"spell-out numbers for First Street through Twelfth Street\\\", \\\"use numbers for 28th Street and above (e.g. 44th Street)\\\", \\\"spell-out numbers for Three Mile Road, Four Mile Road, etc.\\\"]]\",\n  \"id\": 0,\n  \"group_id\": 0,\n  \"subset_key\": \"single\",\n  \"metadata\": {\n    \"id\": \"dev/0\",\n    \"question\": \"What are the CAD Standards Guide requirements when it comes to numbered street name conventions?\",\n    \"evidence\": [\n      {\n        \"document\": \"24514009.pdf\",\n        \"page\": 7\n      }\n    ],\n    \"document_category\": \"Guide\",\n    \"domain\": \"Reference\",\n    \"hop_type\": \"single\"\n  }\n}\n```\n\n## Prompt Template\n\n**System Prompt:**\n```text\nYou are a document QA assistant with access to document-retrieval tools. The answer is contained in the document collection. Search iteratively when evidence is incomplete, then give concise answer values and exact PDF filename/page citations.\n```\n\n**Prompt Template:**\n```text\n{question}\n\nUse the available document-retrieval tools to find evidence before answering. Return only a JSON object:\n{{\"answer\": [\"short answer\"], \"citations\": [{{\"document\": \"filename.pdf\", \"page\": 1}}], \"iterations\": 0}}\n\nThe answer must be a list of concise values. Cite every document page used. Set `iterations` to the number of retrieval steps when it is known.\n```\n\n## Usage\n\n### Using CLI\n\n```bash\nevalscope eval \\\n    --model YOUR_MODEL \\\n    --api-url OPENAI_API_COMPAT_URL \\\n    --api-key EMPTY_TOKEN \\\n    --datasets madqa \\\n    --limit 10  # Remove this line for formal evaluation\n```\n\n### Using Python\n\n```python\nfrom evalscope import run_task\nfrom evalscope.config import TaskConfig\n\ntask_cfg = TaskConfig(\n    model='YOUR_MODEL',\n    api_url='OPENAI_API_COMPAT_URL',\n    api_key='EMPTY_TOKEN',\n    datasets=['madqa'],\n    dataset_args={\n        'madqa': {\n            # subset_list: ['single', 'cross_page', 'cross_doc']  # optional, evaluate specific subsets\n        }\n    },\n    limit=10,  # Remove this line for formal evaluation\n)\n\nrun_task(task_cfg=task_cfg)\n```\n\n\n",
+    "zh": "# MADQA\n\n\n## 概述\n\nMADQA（Multimodal Agentic Document QA）评估文档检索智能体在基于异构 PDF 文档集合的人工编写问题上的表现。EvalScope 加载 ModelScope 镜像 `evalscope/MADQA`。\n\n## 任务描述\n\n- **任务类型**：智能体驱动的多模态文档问答\n- **输入**：针对通过检索工具访问的一组 PDF 文档提出的自然语言问题\n- **输出**：包含简洁答案值及文档/页码引用的 JSON 格式列表\n- **领域**：涵盖金融、法律、参考资料、技术文档和公共记录等多个领域的异构真实世界文档\n\n## 关键特性\n\n- 包含 800 份 PDF 文档上的 2,250 个问题；公开的 ModelScope 镜像提供 1,550 个训练问题、200 个开发集问题和 500 个隐藏标签的测试问题\n- 利用官方证据标注，将问题划分为单页、跨页和跨文档三类\n- 当通过 `TaskConfig.agent_config` 提供检索工具时，支持原生和外部 EvalScope 智能体运行\n- 保留官方定义的答案与引用 JSON 格式规范，包括可选的检索步骤计数\n\n## 评估说明\n\n- 默认的 `dev` 划分是公开评分的数据集。镜像中的 `test` 划分故意省略了答案和证据标签，无法在本地评分\n- 报告官方确定性指标：ANLS*、ANLS* >= 0.5 的准确率、文档 F1 和页面 F1\n- 当预测结果包含 `iterations` 字段或原生智能体轨迹记录了检索工具调用时，额外报告 Kuiper 统计量和浪费努力比率（Wasted Effort Ratio）\n- 官方可选的 Gemini 语义准确性模式未启用：其固定的 Gemini 评判器和已发布的校准无法移植到 EvalScope 的评判器配置中\n- EvalScope 未捆绑官方的 BM25/OCR 检索基线。请配置兼容的原生工具、MCP 服务器，或一个能够访问已发布文档 URL 的外部智能体\n- [论文](https://arxiv.org/abs/2603.12180) | [GitHub](https://github.com/OxRML/MADQA)\n\n\n## 属性\n\n| 属性 | 值 |\n|----------|-------|\n| **基准测试名称** | `madqa` |\n| **数据集ID** | [evalscope/MADQA](https://modelscope.cn/datasets/evalscope/MADQA/summary) |\n| **论文** | [Paper](https://arxiv.org/abs/2603.12180) |\n| **标签** | `Agent`, `MultiModal`, `MultiTurn`, `QA`, `Retrieval` |\n| **指标** | `anls`, `accuracy`, `document_f1`, `page_f1`, `kuiper_statistic`, `wasted_effort_ratio` |\n| **默认示例数** | 0-shot |\n| **评估划分** | `dev` |\n\n\n## 数据统计\n\n| 指标 | 值 |\n|--------|-------|\n| 总样本数 | 200 |\n| 提示词长度（平均） | 680.35 字符 |\n| 提示词长度（最小/最大） | 625 / 806 字符 |\n\n**各子集统计信息：**\n\n| 子集 | 样本数 | 提示词平均长度 | 提示词最小长度 | 提示词最大长度 |\n|--------|---------|-------------|------------|------------|\n| `single` | 163 | 677.05 | 625 | 806 |\n| `cross_page` | 18 | 686.11 | 638 | 739 |\n| `cross_doc` | 19 | 703.21 | 644 | 776 |\n\n## 样例示例\n\n**子集**: `single`\n\n```json\n{\n  \"input\": [\n    {\n      \"id\": \"b3dc7205\",\n      \"content\": \"You are a document QA assistant with access to document-retrieval tools. The answer is contained in the document collection. Search iteratively when evidence is incomplete, then give concise answer values and exact PDF filename/page citations.\"\n    },\n    {\n      \"id\": \"1e14dcbf\",\n      \"content\": \"What are the CAD Standards Guide requirements when it comes to numbered street name conventions?\\n\\nUse the available document-retrieval tools to find evidence before answering. Return only a JSON object:\\n{\\\"answer\\\": [\\\"short answer\\\"], \\\"citations\\\": [{\\\"document\\\": \\\"filename.pdf\\\", \\\"page\\\": 1}], \\\"iterations\\\": 0}\\n\\nThe answer must be a list of concise values. Cite every document page used. Set `iterations` to the number of retrieval steps when it is known.\"\n    }\n  ],\n  \"target\": \"[[\\\"For First Street through Twelfth Street, spell-out the number\\\", \\\"For 28th Street and above (e.g. 44th Street), use numbers\\\", \\\"For Three Mile Road, Four Mile Road, etc., spell-out the number\\\"], [\\\"spell-out numbers for First Street through Twelfth Street\\\", \\\"use numbers for 28th Street and above (e.g. 44th Street)\\\", \\\"spell-out numbers for Three Mile Road, Four Mile Road, etc.\\\"]]\",\n  \"id\": 0,\n  \"group_id\": 0,\n  \"subset_key\": \"single\",\n  \"metadata\": {\n    \"id\": \"dev/0\",\n    \"question\": \"What are the CAD Standards Guide requirements when it comes to numbered street name conventions?\",\n    \"evidence\": [\n      {\n        \"document\": \"24514009.pdf\",\n        \"page\": 7\n      }\n    ],\n    \"document_category\": \"Guide\",\n    \"domain\": \"Reference\",\n    \"hop_type\": \"single\"\n  }\n}\n```\n\n## 提示模板\n\n**系统提示：**\n```text\nYou are a document QA assistant with access to document-retrieval tools. The answer is contained in the document collection. Search iteratively when evidence is incomplete, then give concise answer values and exact PDF filename/page citations.\n```\n\n**提示模板：**\n```text\n{question}\n\nUse the available document-retrieval tools to find evidence before answering. Return only a JSON object:\n{{\"answer\": [\"short answer\"], \"citations\": [{{\"document\": \"filename.pdf\", \"page\": 1}}], \"iterations\": 0}}\n\nThe answer must be a list of concise values. Cite every document page used. Set `iterations` to the number of retrieval steps when it is known.\n```\n\n## 使用方法\n\n### 使用 CLI\n\n```bash\nevalscope eval \\\n    --model YOUR_MODEL \\\n    --api-url OPENAI_API_COMPAT_URL \\\n    --api-key EMPTY_TOKEN \\\n    --datasets madqa \\\n    --limit 10  # 正式评估时请删除此行\n```\n\n### 使用 Python\n\n```python\nfrom evalscope import run_task\nfrom evalscope.config import TaskConfig\n\ntask_cfg = TaskConfig(\n    model='YOUR_MODEL',\n    api_url='OPENAI_API_COMPAT_URL',\n    api_key='EMPTY_TOKEN',\n    datasets=['madqa'],\n    dataset_args={\n        'madqa': {\n            # subset_list: ['single', 'cross_page', 'cross_doc']  # 可选，用于评估特定子集\n        }\n    },\n    limit=10,  # 正式评估时请删除此行\n)\n\nrun_task(task_cfg=task_cfg)\n```",
+    "content_hash": "7172fd95fd5411c6114b2915f1cfd585",
+    "needs_translation": false
+  },
+  "updated_at": "2026-09-07T17:31:25.033339+08:00",
+  "translation_updated_at": "2026-09-07T17:31:34+08:00"
+}

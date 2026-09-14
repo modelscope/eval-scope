@@ -1,0 +1,1 @@
+"""MADQA benchmark integration."""

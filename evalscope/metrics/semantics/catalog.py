@@ -355,6 +355,16 @@ METRIC_DEFINITIONS.update(
             baseline='quality.error_rate.ratio',
             metric_name='Bias Ratio',
         ),
+        'document_f1': MetricEntry(baseline='quality.f1.ratio', metric_name='Document F1'),
+        'page_f1': MetricEntry(baseline='quality.f1.ratio', metric_name='Page F1'),
+        'kuiper_statistic': MetricEntry(
+            baseline='quality.effort_calibration.unbounded',
+            metric_name='Kuiper Statistic',
+        ),
+        'wasted_effort_ratio': MetricEntry(
+            baseline='quality.effort_ratio.unbounded',
+            metric_name='Wasted Effort Ratio',
+        ),
         # $OneMillion-Bench reports this normalized rubric-weighted score as its primary metric.
         'expert_score': MetricEntry(baseline='quality.score.ratio', metric_name='Expert Score'),
         'total_model_time': MetricEntry(baseline='diagnostic.unspecified', raw_unit='s', display_precision=2),
