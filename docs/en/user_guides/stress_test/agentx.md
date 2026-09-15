@@ -63,9 +63,19 @@ evalscope perf --scenario agentx --data-source huggingface \
   --url http://localhost:8000/v1/chat/completions --parallel 8
 ```
 
+## Waiting for in-flight requests
+
+Set `benchmark_grace_period` in the scenario JSON to control how many additional seconds AIPerf waits for outstanding responses after the sending duration. For example, replace `--scenario agentx` with:
+
+```bash
+--scenario '{"name":"agentx","benchmark_grace_period":600}'
+```
+
+The value must be finite and nonnegative; zero is forwarded explicitly. Omit it to retain AIPerf's default (30 seconds in 0.12.0). This does not change `--duration` or the per-request `request_timeout_seconds`. Responses completed during this period are included in the metrics, and the phase elapsed time can exceed the sending duration. Use the same setting when comparing engines and check the phase logs for cancelled requests.
+
 ## Advanced configuration
 
-Use JSON only to select a different workload variant or record deployment metadata. The `full` variant requires a service that supports its larger context window:
+Use JSON to select a different workload variant, configure request timing, or record deployment metadata. The `full` variant requires a service that supports its larger context window:
 
 ```bash
 evalscope perf \

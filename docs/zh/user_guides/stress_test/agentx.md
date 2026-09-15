@@ -50,9 +50,19 @@ evalscope perf --scenario agentx --data-source huggingface \
   --url http://localhost:8000/v1/chat/completions --parallel 8
 ```
 
+## 等待在途请求完成
+
+在场景 JSON 中设置 `benchmark_grace_period`，可以控制发送时长结束后 AIPerf 额外等待在途响应的秒数。例如，将 `--scenario agentx` 替换为：
+
+```bash
+--scenario '{"name":"agentx","benchmark_grace_period":600}'
+```
+
+取值须为有限的非负数；零也会显式透传。省略时保留 AIPerf 默认值（0.12.0 中为 30 秒）。该参数不会改变 `--duration` 或单个请求的 `request_timeout_seconds`。在此期间完成的响应会计入指标，阶段总耗时可能超过发送时长。对比不同引擎时请使用相同设置，并检查阶段日志中的取消请求数。
+
 ## 高级配置
 
-JSON 形式仅用于选择其他 workload 变体或记录部署元数据。`full` 变体需要服务端支持更大的上下文窗口：
+JSON 形式可用于选择其他 workload 变体、配置请求时间参数或记录部署元数据。`full` 变体需要服务端支持更大的上下文窗口：
 
 ```bash
 evalscope perf \

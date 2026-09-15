@@ -62,6 +62,34 @@ class TestAgentXArguments:
 
 class TestAgentXCommand:
 
+    @pytest.mark.parametrize('grace', [None, 0, 600.5])
+    @pytest.mark.parametrize('mode', ['smoke', 'benchmark'])
+    def test_benchmark_grace_period_is_forwarded(
+        self, tmp_path: Path, grace: float | None, mode: str
+    ) -> None:
+        args = _args(scenario=json.dumps({
+            'name': 'agentx', 'mode': mode, 'benchmark_grace_period': grace,
+            'request_timeout_seconds': 90.5,
+        }))
+        dataset = AgentXDatasetProvenance(
+            source=HubType.LOCAL, dataset_id='test', revision=None,
+            trace_file=str(tmp_path / 'traces.jsonl'), sha256='digest', verified=True,
+        )
+        command, _ = _build_command(
+            args, args.scenario, dataset, concurrency=1, duration=1800,
+            seed=20260707, artifacts_path=tmp_path,
+        )
+        assert command.count('--benchmark-grace-period') == int(grace is not None)
+        if grace is not None:
+            assert float(command[command.index('--benchmark-grace-period') + 1]) == grace
+        assert command[command.index('--request-timeout-seconds') + 1] == '90.5'
+        assert command[command.index('--benchmark-duration') + 1] == '1800'
+
+    @pytest.mark.parametrize('grace', [-1, float('inf'), float('nan')])
+    def test_benchmark_grace_period_rejects_invalid_values(self, grace: float) -> None:
+        with pytest.raises(ValueError):
+            AgentXScenario(benchmark_grace_period=grace)
+
     @pytest.mark.parametrize(
         'scenario, expected',
         [
