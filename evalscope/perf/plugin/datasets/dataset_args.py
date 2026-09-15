@@ -100,6 +100,23 @@ class TextDatasetArgs(TextLengthArgs):
     """
 
 
+class MMMUMultiImageDatasetArgs(BaseDatasetArgs):
+    """Arguments for the MMMU multi-image performance dataset."""
+
+    subset: str = 'Music'
+    """MMMU subject/configuration to load."""
+
+    min_images: int = 2
+    """Minimum number of images required for a row to be included."""
+
+    @field_validator('min_images')
+    @classmethod
+    def _validate_min_images(cls, v: int) -> int:
+        if not 2 <= v <= 7:
+            raise ValueError(f'min_images must be between 2 and 7, got {v}')
+        return v
+
+
 class MultiTurnDatasetArgs(MultiTurnArgs, BaseDatasetArgs):
     """Args schema for multi-turn datasets.
 

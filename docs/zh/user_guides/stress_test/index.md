@@ -8,6 +8,7 @@ quick_start.md
 agentx.md
 parameters.md
 examples.md
+multi_image.md
 multi_turn.md
 sla_auto_tune.md
 speed_benchmark.md
