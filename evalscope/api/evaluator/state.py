@@ -280,6 +280,11 @@ class TaskState:
         """The scoring target for this `Sample`."""
         return self._target.text
 
+    @property
+    def target_values(self) -> List[str]:
+        """Accepted target answers for multi-reference scoring."""
+        return list(self._target)
+
     @target.setter
     def target(self, text: str) -> None:
         """Set the target for review purposes."""

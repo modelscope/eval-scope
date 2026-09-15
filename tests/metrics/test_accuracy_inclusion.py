@@ -1,8 +1,11 @@
 import pytest
 
+from evalscope.api.evaluator import ReviewResult, TaskState
+from evalscope.api.model import ModelOutput
 from evalscope.api.registry import BENCHMARK_REGISTRY
 from evalscope.benchmarks.mmlu_redux.mmlu_redux_adapter import MMLUReduxAdapter
 from evalscope.benchmarks.trivia_qa.trivia_qa_adapter import TriviaQaAdapter
+from evalscope.config import TaskConfig
 from evalscope.metrics.nlp.metrics import Accuracy
 
 
@@ -70,6 +73,34 @@ def test_trivia_qa_accepts_normalized_aliases() -> None:
         }
     )
     assert Accuracy(allow_inclusion=True).apply([' NYC\n', 'York'], [sample.target] * 2) == [1.0, 0.0]
+
+
+def test_trivia_qa_scores_aliases_without_changing_cached_target() -> None:
+    adapter = TriviaQaAdapter(
+        benchmark_meta=BENCHMARK_REGISTRY['trivia_qa'],
+        task_config=TaskConfig(datasets=['trivia_qa']),
+    )
+    sample = adapter.record_to_sample(
+        {
+            'question': 'What city?',
+            'question_id': 'example',
+            'answer': {'aliases': ['New York City'], 'normalized_aliases': ['new york city', 'nyc']},
+            'entity_pages': {'wiki_context': 'A city in the United States.'},
+        }
+    )
+    sample.id = 0
+    state = TaskState(
+        model='mock',
+        sample=sample,
+        output=ModelOutput.from_content('mock', 'NYC'),
+        completed=True,
+    )
+
+    sample_score = adapter.calculate_metrics(state)
+    review_result = ReviewResult.from_score_state(sample_score, state)
+
+    assert sample_score.score.value['accuracy'] == 1.0
+    assert review_result.target == 'New York Citynew york citynyc'
 
 
 @pytest.mark.parametrize('benchmark_name', ['mmlu_redux', 'trivia_qa'])

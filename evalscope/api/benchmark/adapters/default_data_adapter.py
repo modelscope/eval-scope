@@ -664,9 +664,12 @@ class DefaultDataAdapter(DataAdapter):
                     score.main_score_name = metric_name
                 metric_cls = get_metric(metric_name)
                 metric_func = metric_cls(**metric_args)
+                metric_reference = (
+                    task_state.target_values if getattr(metric_func, 'allow_inclusion', False) else reference
+                )
                 metric_score = metric_func(
                     prediction=filtered_prediction,
-                    reference=reference,
+                    reference=metric_reference,
                 )
                 score.value[metric_name] = metric_score
             except Exception as e:
